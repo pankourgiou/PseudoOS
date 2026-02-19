@@ -1,1 +1,1 @@
-Here I made a pseudoOS like those you can see on the movies..!!!it is not an actual/real operational system but the effect of "movie style OS" is cool!On issues folder you can see how to run the program correctly! enjoy!
+Here I made a pseudoOS like those you can see on the movies..!!!it is not an actual/real operational system but the effect of "movie style OS" is cool!you will have to copy paste the code and save it as an .html then double-click the file and you will be able to see the PseudoOS in action!!enjoy!
