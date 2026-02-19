@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>VOIDFRAME // BLACKCORE OS</title>
+<style>
+    body {
+        margin: 0;
+        background: rgb(5,8,10);
+        overflow: hidden;
+        font-family: Consolas, monospace;
+        color: #00ff88;
+    }
+
+    canvas {
+        display: block;
+    }
+</style>
+</head>
+<body>
+<canvas id="screen"></canvas>
+
+<script>
+const canvas = document.getElementById("screen");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
+
+const GREEN = "#00ff78";
+const CYAN = "#00c8ff";
+const RED = "#ff3c3c";
+const GRAY = "#787878";
+
+const LOG_LINES = 26;
+
+const LOG_MESSAGES = [
+    "[CORE] Neural branch expanded",
+    "[AI] Recursive depth increased",
+    "[NET] Signal triangulated",
+    "[SYS] Heuristic drift corrected",
+    "[MEM] Volatile cache overwritten",
+    "[WARN] Pattern instability detected",
+    "[OK] Stabilization complete",
+    "[CORE] Predictive loop refined",
+    "[AI] Autonomous cycle executed",
+    "[NET] External vector mapped"
+];
+
+let logs = [];
+
+function addLog() {
+    const msg = LOG_MESSAGES[Math.floor(Math.random() * LOG_MESSAGES.length)];
+    const time = new Date().toLocaleTimeString();
+    logs.push(`${time} ${msg}`);
+    if (logs.length > LOG_LINES) logs.shift();
+}
+
+for (let i = 0; i < LOG_LINES; i++) addLog();
+
+// Nodes
+let nodes = [];
+function createNodes() {
+    nodes = [];
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    for (let i = 0; i < 40; i++) {
+        nodes.push({
+            x: cx + (Math.random() * 240 - 120),
+            y: cy + (Math.random() * 240 - 120),
+            vx: (Math.random() * 0.6 - 0.3),
+            vy: (Math.random() * 0.6 - 0.3)
+        });
+    }
+}
+createNodes();
+
+let alertActive = false;
+let alertTimer = 0;
+
+function draw() {
+    ctx.fillStyle = "rgb(5,8,10)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const WIDTH = canvas.width;
+    const HEIGHT = canvas.height;
+    const centerX = WIDTH / 2;
+    const centerY = HEIGHT / 2;
+
+    // Random log updates
+    if (Math.random() < 0.05) addLog();
+
+    // Alert system
+    if (!alertActive && Math.random() < 0.002) {
+        alertActive = true;
+        alertTimer = 60 + Math.random() * 60;
+    }
+
+    if (alertActive) {
+        alertTimer--;
+        if (alertTimer <= 0) alertActive = false;
+    }
+
+    // LEFT PANEL
+    ctx.fillStyle = "rgb(10,15,20)";
+    ctx.fillRect(20, 20, 420, HEIGHT - 40);
+
+    ctx.font = "14px Consolas";
+    logs.forEach((line, i) => {
+        ctx.fillStyle = line.includes("[WARN]") ? RED : GREEN;
+        ctx.fillText(line, 30, 40 + i * 22);
+    });
+
+    // RIGHT PANEL
+    ctx.fillStyle = "rgb(10,15,20)";
+    ctx.fillRect(WIDTH - 300, 20, 280, HEIGHT - 40);
+
+    const metrics = [
+        ["CPU LOAD", 70 + Math.random() * 25],
+        ["AI LOAD", 80 + Math.random() * 18],
+        ["SIGNAL", 50 + Math.random() * 40],
+        ["LATENCY", 12 + Math.random() * 48]
+    ];
+
+    ctx.font = "18px Consolas";
+
+    metrics.forEach((m, i) => {
+        ctx.fillStyle = CYAN;
+        ctx.fillText(`${m[0]}: ${Math.floor(m[1])}%`, WIDTH - 280, 50 + i * 40);
+
+        ctx.fillRect(WIDTH - 280, 65 + i * 40, m[1] * 2, 6);
+    });
+
+    // Update nodes
+    nodes.forEach(n => {
+        n.x += n.vx;
+        n.y += n.vy;
+
+        if (Math.abs(n.x - centerX) > 150) n.vx *= -1;
+        if (Math.abs(n.y - centerY) > 150) n.vy *= -1;
+    });
+
+    // Draw connections
+    ctx.strokeStyle = GREEN;
+    nodes.forEach(a => {
+        nodes.forEach(b => {
+            const dx = a.x - b.x;
+            const dy = a.y - b.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 90) {
+                ctx.beginPath();
+                ctx.moveTo(a.x, a.y);
+                ctx.lineTo(b.x, b.y);
+                ctx.stroke();
+            }
+        });
+    });
+
+    // Draw nodes
+    ctx.fillStyle = GREEN;
+    nodes.forEach(n => {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    // Core label
+    ctx.font = "28px Consolas";
+    ctx.fillStyle = CYAN;
+    ctx.fillText("AUTONOMOUS AI CORE", centerX - 180, centerY - 180);
+
+    // Alert overlay
+    if (alertActive) {
+        ctx.fillStyle = RED;
+        ctx.fillText("ANOMALOUS DATA STREAM", centerX - 220, 50);
+    }
+
+    // Bottom status
+    ctx.strokeStyle = GRAY;
+    ctx.beginPath();
+    ctx.moveTo(20, HEIGHT - 40);
+    ctx.lineTo(WIDTH - 20, HEIGHT - 40);
+    ctx.stroke();
+
+    ctx.font = "14px Consolas";
+    ctx.fillStyle = GREEN;
+    ctx.fillText(
+        "CORE STATE: ADAPTIVE | THREADS ACTIVE | VOIDFRAME ONLINE",
+        20,
+        HEIGHT - 20
+    );
+
+    requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+</body>
+</html>
